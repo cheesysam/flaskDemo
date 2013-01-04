@@ -29,11 +29,6 @@ class db():
         self.connection.close()
         print 'exit db'
 
-
-@app.route("/")
-def root():
-    return str(data)
-
 def database_check_loop():
     while 1:
         print 'loop'
@@ -50,7 +45,27 @@ def add_data_to_db(new_data):
     with db() as a:
         a.save(new_data)
 
-if __name__ == "__main__":
+@app.route("/")
+def root():
+    return 'data'
+def init_app():
     db_thread = Thread(target = database_check_loop())
+    db_thread.setDaemon(True)
     db_thread.start()
-    app.run()
+    print 'returning'
+    return
+
+def t():
+    while 1:
+        print 'asdf'
+	sleep(2)
+
+if __name__ == "__main__":
+    #init_app()
+    #a = Thread(target = app.run())
+    #a.start()
+    #print 'lol'
+    a = Thread(target = t())
+    a.daemon = True
+    a.start()
+    print 'a'
