@@ -55,17 +55,8 @@ def init_app():
     print 'returning'
     return
 
-def t():
-    while 1:
-        print 'asdf'
-	sleep(2)
-
 if __name__ == "__main__":
-    #init_app()
-    #a = Thread(target = app.run())
-    #a.start()
-    #print 'lol'
-    a = Thread(target = t())
-    a.daemon = True
+    a = Thread(target = app.run)
     a.start()
-    print 'a'
+    b = Thread(target = database_check_loop)
+    b.start()
