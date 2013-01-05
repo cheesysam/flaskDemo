@@ -47,16 +47,13 @@ def add_data_to_db(new_data):
 
 @app.route("/")
 def root():
-    return 'data'
-def init_app():
-    db_thread = Thread(target = database_check_loop())
-    db_thread.setDaemon(True)
-    db_thread.start()
-    print 'returning'
-    return
+    with db() as a:
+        return a.find_one()
 
 if __name__ == "__main__":
     a = Thread(target = app.run)
     a.start()
     b = Thread(target = database_check_loop)
     b.start()
+    with db() as a:
+        print a.find_one()
