@@ -21,7 +21,6 @@ class request_handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.wfile.write(returnString)
 	return
 
-
 def start_server():
     """Start the server."""
     server_address = ("", PORT)

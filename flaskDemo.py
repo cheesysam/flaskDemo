@@ -48,12 +48,14 @@ def add_data_to_db(new_data):
 @app.route("/")
 def root():
     with db() as a:
-        return a.find_one()
+        data =  a.find()
+    toReturn = ''
+    for doc in data:
+        toReturn = toReturn + str(doc) + '<br>'
+    return toReturn
 
 if __name__ == "__main__":
     a = Thread(target = app.run)
     a.start()
     b = Thread(target = database_check_loop)
     b.start()
-    with db() as a:
-        print a.find_one()
