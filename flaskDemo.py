@@ -47,14 +47,31 @@ def add_data_to_db(new_data):
 
 @app.route("/")
 def root():
+    return render_template("layout.html")
+
+@app.route("/cpu")
+def cpu():
     with db() as a:
-        data =  a.find()
-    toReturn = ''
+        data =  a.find().sort("_id", -1).limit(1)[0]
+    return render_template("data.html", data = data, key = 'cpu')
+
+@app.route("/mem")
+def mem():
+    with db() as a:
+        data =  a.find().sort("_id", -1).limit(1)[0]
+    return render_template('data.html', data = data, key = 'mem')
+
+@app.route("/dbdump")
+def dbdump():
+    with db() as a:
+        data = a.find()
+    toReturn = []
     for doc in data:
-        toReturn = toReturn + str(doc) + '<br>'
-    return toReturn
+        toReturn.append( str(doc))
+    return render_template('dbdump.html', data = toReturn)
 
 if __name__ == "__main__":
+#    app.run(debug = True)
     a = Thread(target = app.run)
     a.start()
     b = Thread(target = database_check_loop)
