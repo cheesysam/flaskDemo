@@ -1,5 +1,6 @@
 import SimpleHTTPServer, BaseHTTPServer
 import random
+import json
 
 PORT = 1234
 
@@ -9,16 +10,11 @@ class request_handler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
     def do_GET(self):
 	print 'get request'
-	returnString = '{"data":{"cpu":['
-        for i in range(10):
-            returnString += str(self.number_generator())
-	    returnString += ', ' if i is not 9 else ''
-	returnString += '], "mem":['
-        for i in range(10):
-            returnString += str(self.number_generator())
-	    returnString += ', ' if i is not 9 else ''
-	returnString += ']}}'
-        self.wfile.write(returnString)
+	generatedData = {"data":{"cpu":"", "mem":""}}
+	generatedData["data"]["cpu"] = [self.number_generator() for x in range(10)]
+	generatedData["data"]["mem"] = [self.number_generator() for x in range(10)]
+	print generatedData
+        self.wfile.write(json.dumps(generatedData))
 	return
 
 def start_server():
