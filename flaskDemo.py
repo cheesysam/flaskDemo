@@ -1,7 +1,6 @@
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, jsonify
 import json
 import urllib2
-import sqlite3
 
 from threading import Thread
 from time import sleep
@@ -37,7 +36,7 @@ def database_check_loop():
             data = json.load(jsonData)
             add_data_to_db(data)
         except Exception, e:
-            data = 'Data not received. Number server not running?'
+            print 'Data not received. Number server not running?'
 	sleep(10)
 
 def add_data_to_db(new_data):
@@ -45,21 +44,27 @@ def add_data_to_db(new_data):
     with db() as a:
         a.save(new_data)
 
+def get_latest_data():
+    with db() as a:
+        data =  a.find().sort("_id", -1).limit(1)[0]
+    return data
+
+@app.route('/_update_data')
+def _update_data():
+    print get_latest_data()
+    return jsonify(get_latest_data()["data"])
+
 @app.route("/")
 def root():
     return render_template("layout.html")
 
 @app.route("/cpu")
 def cpu():
-    with db() as a:
-        data =  a.find().sort("_id", -1).limit(1)[0]
-    return render_template("data.html", data = data, key = 'cpu')
+    return render_template("data.html", data = get_latest_data(), key = 'cpu')
 
 @app.route("/mem")
 def mem():
-    with db() as a:
-        data =  a.find().sort("_id", -1).limit(1)[0]
-    return render_template('data.html', data = data, key = 'mem')
+    return render_template('data.html', data = get_latest_data(), key = 'mem')
 
 @app.route("/dbdump")
 def dbdump():
